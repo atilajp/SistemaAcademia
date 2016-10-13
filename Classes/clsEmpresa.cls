@@ -20,12 +20,6 @@ Private booAtributoAlterado As Boolean
 
 'Atributos da Classe
 
-'Recordset e Objeto de referência para a classe de Vetor de Registro
-
-'Vetor de Registro para a clsPessoa
-Public rstPessoa As Recordset
-Private objPessoa As New clsPessoa
-
 'Atributo de backup e atributo identificador da Classe
 Private bkpIdEmpresa As Variant
 Private lngIdEmpresa As Variant
@@ -57,8 +51,6 @@ Property Let IdEmpresa(argIdEmpresa As Variant)
 
 	lngIdEmpresa = argIdEmpresa
 	booAtributoAlterado = True
-	'Atribui o Vetor Recordset retornado pelo método da clsPessoa
-	Set rstPessoa = objPessoa.vetorPessoa("IdEmpresa", IdEmpresa)
 	booChaveAlterada = True
 
 	If IsEmpty(bkpIdEmpresa) Then
@@ -283,6 +275,26 @@ On Error Goto Err_salvar
 		salvar = (objCon.executa(strSql) > 0)
 	Else
 		salvar = incluir
+	End If
+
+	If salvar Then
+		booChaveAlterada = False
+		booAtributoAlterado = False
+
+		'Atualiza as variáveis de backup com o novo valor da chave
+		bkpIdEmpresa = IdEmpresa
+	End If
+
+Exit_salvar:
+	Exit Function
+
+Err_salvar:
+	salvar = False
+	Goto Exit_salvar
+
+End Function
+
+'Fim da classe...
 	End If
 
 	If salvar Then

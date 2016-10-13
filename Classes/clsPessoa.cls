@@ -22,10 +22,6 @@ Private booAtributoAlterado As Boolean
 
 'Recordset e Objeto de referência para a classe de Vetor de Registro
 
-'Vetor de Registro para a clsPessoa
-Public rstPessoa As Recordset
-Private objPessoa As New clsPessoa
-
 'Vetor de Registro para a clsPessoaFones
 Public rstPessoaFones As Recordset
 Private objPessoaFones As New clsPessoaFones
@@ -50,6 +46,11 @@ Private dtmDataNascimento As Variant
 
 Private lngDependenteDe As Variant
 
+'Objeto da classe de Descrição de Tipo
+Private objetoPessoa As New clsPessoa
+
+Private booDesativado As Variant
+
 Private strEmail As Variant
 
 Private strEnderecoPessoa As Variant
@@ -59,6 +60,9 @@ Private strFantasiaApelido As Variant
 Private strFonePrincipa As Variant
 
 Private lngIdEmpresa As Variant
+
+'Objeto da classe de Descrição de Tipo
+Private objetoEmpresa As New clsEmpresa
 
 Private lngIdPessoaTipo As Variant
 
@@ -98,8 +102,6 @@ Property Let IdPessoa(argIdPessoa As Variant)
 
 	lngIdPessoa = argIdPessoa
 	booAtributoAlterado = True
-	'Atribui o Vetor Recordset retornado pelo método da clsPessoa
-	Set rstPessoa = objPessoa.vetorPessoa("DependenteDe", IdPessoa)
 	'Atribui o Vetor Recordset retornado pelo método da clsPessoaFones
 	Set rstPessoaFones = objPessoaFones.vetorPessoaFones("IdPessoa", IdPessoa)
 	booChaveAlterada = True
@@ -210,6 +212,19 @@ End Property
 Property Let DependenteDe(argDependenteDe As Variant)
 
 	lngDependenteDe = argDependenteDe
+	booAtributoAlterado = True
+
+End Property
+
+Property Get Desativado() As Variant
+
+	Desativado = booDesativado
+
+End Property
+
+Property Let Desativado(argDesativado As Variant)
+
+	booDesativado = argDesativado
 	booAtributoAlterado = True
 
 End Property
@@ -344,6 +359,26 @@ Property Let UFPessoa(argUFPessoa As Variant)
 
 End Property
 
+Property Get objPessoa() As Variant
+
+	If Not IsEmpty(DependenteDe) Then
+		If objetoPessoa.obter(DependenteDe) Then
+			Set objPessoa = objetoPessoa
+		End If
+	End If
+
+End Property
+
+Property Get objEmpresa() As Variant
+
+	If Not IsEmpty(IdEmpresa) Then
+		If objetoEmpresa.obter(IdEmpresa) Then
+			Set objEmpresa = objetoEmpresa
+		End If
+	End If
+
+End Property
+
 Property Get objPessoaTipo() As Variant
 
 	If Not IsEmpty(IdPessoaTipo) Then
@@ -396,6 +431,7 @@ On Error GoTo Err_limpar
 	CPFCNPJ = Null
 	DataNascimento = Null
 	DependenteDe = Null
+	Desativado = Null
 	Email = Null
 	EnderecoPessoa = Null
 	FantasiaApelido = Null
@@ -461,8 +497,8 @@ On Error Goto Err_incluir
 	Dim strSql As String
 
 	strSql = "Insert Into " & _
-		"Pessoa(IdPessoa,BairroPessoa,CEPPessoa,CidadePessoa,ComplementoPontoDeRe,Contato,CPFCNPJ,DataNascimento,DependenteDe,Email,EnderecoPessoa,FantasiaApelido,FonePrincipa,IdEmpresa,IdPessoaTipo,NomeRazao,NumPessoa,RGIE,UFPessoa) " & _
-		"Values(" & objCon.valorSql(IdPessoa) & "," & objCon.valorSql(BairroPessoa) & "," & objCon.valorSql(CEPPessoa) & "," & objCon.valorSql(CidadePessoa) & "," & objCon.valorSql(ComplementoPontoDeRe) & "," & objCon.valorSql(Contato) & "," & objCon.valorSql(CPFCNPJ) & "," & objCon.valorSql(DataNascimento) & "," & objCon.valorSql(DependenteDe) & "," & objCon.valorSql(Email) & "," & objCon.valorSql(EnderecoPessoa) & "," & objCon.valorSql(FantasiaApelido) & "," & objCon.valorSql(FonePrincipa) & "," & objCon.valorSql(IdEmpresa) & "," & objCon.valorSql(IdPessoaTipo) & "," & objCon.valorSql(NomeRazao) & "," & objCon.valorSql(NumPessoa) & "," & objCon.valorSql(RGIE) & "," & objCon.valorSql(UFPessoa) & ")"
+		"Pessoa(IdPessoa,BairroPessoa,CEPPessoa,CidadePessoa,ComplementoPontoDeRe,Contato,CPFCNPJ,DataNascimento,DependenteDe,Desativado,Email,EnderecoPessoa,FantasiaApelido,FonePrincipa,IdEmpresa,IdPessoaTipo,NomeRazao,NumPessoa,RGIE,UFPessoa) " & _
+		"Values(" & objCon.valorSql(IdPessoa) & "," & objCon.valorSql(BairroPessoa) & "," & objCon.valorSql(CEPPessoa) & "," & objCon.valorSql(CidadePessoa) & "," & objCon.valorSql(ComplementoPontoDeRe) & "," & objCon.valorSql(Contato) & "," & objCon.valorSql(CPFCNPJ) & "," & objCon.valorSql(DataNascimento) & "," & objCon.valorSql(DependenteDe) & "," & objCon.valorSql(Desativado) & "," & objCon.valorSql(Email) & "," & objCon.valorSql(EnderecoPessoa) & "," & objCon.valorSql(FantasiaApelido) & "," & objCon.valorSql(FonePrincipa) & "," & objCon.valorSql(IdEmpresa) & "," & objCon.valorSql(IdPessoaTipo) & "," & objCon.valorSql(NomeRazao) & "," & objCon.valorSql(NumPessoa) & "," & objCon.valorSql(RGIE) & "," & objCon.valorSql(UFPessoa) & ")"
 
 	incluir = (objCon.executa(strSql) > 0)
 
@@ -544,6 +580,7 @@ On Error GoTo Err_obter
 	CPFCNPJ = rstObter.Fields("CPFCNPJ")
 	DataNascimento = rstObter.Fields("DataNascimento")
 	DependenteDe = rstObter.Fields("DependenteDe")
+	Desativado = rstObter.Fields("Desativado")
 	Email = rstObter.Fields("Email")
 	EnderecoPessoa = rstObter.Fields("EnderecoPessoa")
 	FantasiaApelido = rstObter.Fields("FantasiaApelido")
@@ -585,7 +622,7 @@ On Error Goto Err_salvar
 
 	If existe(bkpIdPessoa) Then
 		strSql = "Update Pessoa " & _
-			"Set IdPessoa = " & objCon.valorSql(IdPessoa) & ", BairroPessoa = " & objCon.valorSql(BairroPessoa) & ", CEPPessoa = " & objCon.valorSql(CEPPessoa) & ", CidadePessoa = " & objCon.valorSql(CidadePessoa) & ", ComplementoPontoDeRe = " & objCon.valorSql(ComplementoPontoDeRe) & ", Contato = " & objCon.valorSql(Contato) & ", CPFCNPJ = " & objCon.valorSql(CPFCNPJ) & ", DataNascimento = " & objCon.valorSql(DataNascimento) & ", DependenteDe = " & objCon.valorSql(DependenteDe) & ", Email = " & objCon.valorSql(Email) & ", EnderecoPessoa = " & objCon.valorSql(EnderecoPessoa) & ", FantasiaApelido = " & objCon.valorSql(FantasiaApelido) & ", FonePrincipa = " & objCon.valorSql(FonePrincipa) & ", IdEmpresa = " & objCon.valorSql(IdEmpresa) & ", IdPessoaTipo = " & objCon.valorSql(IdPessoaTipo) & ", NomeRazao = " & objCon.valorSql(NomeRazao) & ", NumPessoa = " & objCon.valorSql(NumPessoa) & ", RGIE = " & objCon.valorSql(RGIE) & ", UFPessoa = " & objCon.valorSql(UFPessoa) & _
+			"Set IdPessoa = " & objCon.valorSql(IdPessoa) & ", BairroPessoa = " & objCon.valorSql(BairroPessoa) & ", CEPPessoa = " & objCon.valorSql(CEPPessoa) & ", CidadePessoa = " & objCon.valorSql(CidadePessoa) & ", ComplementoPontoDeRe = " & objCon.valorSql(ComplementoPontoDeRe) & ", Contato = " & objCon.valorSql(Contato) & ", CPFCNPJ = " & objCon.valorSql(CPFCNPJ) & ", DataNascimento = " & objCon.valorSql(DataNascimento) & ", DependenteDe = " & objCon.valorSql(DependenteDe) & ", Desativado = " & objCon.valorSql(Desativado) & ", Email = " & objCon.valorSql(Email) & ", EnderecoPessoa = " & objCon.valorSql(EnderecoPessoa) & ", FantasiaApelido = " & objCon.valorSql(FantasiaApelido) & ", FonePrincipa = " & objCon.valorSql(FonePrincipa) & ", IdEmpresa = " & objCon.valorSql(IdEmpresa) & ", IdPessoaTipo = " & objCon.valorSql(IdPessoaTipo) & ", NomeRazao = " & objCon.valorSql(NomeRazao) & ", NumPessoa = " & objCon.valorSql(NumPessoa) & ", RGIE = " & objCon.valorSql(RGIE) & ", UFPessoa = " & objCon.valorSql(UFPessoa) & _
 			" Where IdPessoa = " & objCon.valorSql(bkpIdPessoa)
 
 		salvar = (objCon.executa(strSql) > 0)
@@ -607,22 +644,6 @@ Exit_salvar:
 Err_salvar:
 	salvar = False
 	Goto Exit_salvar
-
-End Function
-
-
-'Métodos Adicionais
-
-'Método que retorna um Vetor de Registros da classe
-Public Function vetorPessoa(argAtributo As String, argValor As Long) As Recordset
-
-	Dim strSql As String
-
-	Dim objCon As New aclConexaoBD
-
-	strSql = "Select * From Pessoa Where " & argAtributo & " = " & CStr(argValor)
-
-	Set vetorPessoa = objCon.consulta(strSql)
 
 End Function
 
